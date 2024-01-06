@@ -10,5 +10,18 @@ I think the way to go is as follows:
 
 1. Check with advisor
 2. Download all the data
+3. RDD w/ this guy https://github.com/social-science-data-editors/template_README/blob/release-candidate/templates/README.md
 3. Build the measure from the QJE paper
 4. TBD
+
+## Data Sources
+
+TODO: Data Availability
+TODO: Summary on Data
+
+## Dependencies
+
+TODO: Explain Python Stuff
+TODO: Explain R stuff
+
+## References
