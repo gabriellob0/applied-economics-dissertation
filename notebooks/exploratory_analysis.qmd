@@ -1,0 +1,164 @@
+---
+title: "Exploratory Data Analysis of PSID Data"
+author: "Gabriel Lobo"
+---
+
+## Load packages
+
+```{r}
+library("haven")
+library("here")
+library("dplyr")
+```
+
+## Data
+
+```{r}
+psid <- read_dta(here("data", "raw", "psid_hufe.dta"))
+```
+
+I am going to look at some basic summary stats first. How many years and countries. There should be only one country as this is US data.
+
+```{r}
+# check single country
+length(unique(psid$country)) == 1
+
+# check years in data.
+unique(psid$wavey)
+```
+
+From 1968 to 2019, but with some missing years.
+
+Now look at all the variables.
+
+```{r}
+colnames(psid)
+```
+
+I want to check if the *pid* and *cpf_pid* columns have correspondence in uniqueness (i.e., observations that share one value for one column also share one value for another).
+
+```{r}
+psid |>
+  select(pid, cpf_pid) |>
+  group_by(pid) |>
+  mutate(all_unique = length(unique(cpf_pid)) == 1) |>
+  pull(all_unique) |>
+  all()
+
+psid |>
+  select(pid, cpf_pid) |>
+  group_by(cpf_pid) |>
+  mutate(all_unique = length(unique(pid)) == 1) |>
+  pull(all_unique) |>
+  all()
+```
+
+Same with the across wave household ones.
+
+```{r}
+psid |>
+  select(hid_v1, cpf_hid) |>
+  group_by(hid_v1) |>
+  mutate(all_unique = length(unique(cpf_hid)) == 1) |>
+  pull(all_unique) |>
+  all()
+
+psid |>
+  select(hid_v1, cpf_hid) |>
+  group_by(cpf_hid) |>
+  mutate(all_unique = length(unique(hid_v1)) == 1) |>
+  pull(all_unique) |>
+  all()
+```
+
+Seems like I can group with any of these variables. I will do some basic cleaning now.
+
+```{r}
+basic_filters <- psid |>
+  filter(
+    # is Hispanic dummy
+    !is.na(hisp),
+    # is female dummy
+    !is.na(female),
+    # number of people in the household
+    nphh > 1,
+    # relation to household head
+    rel %in% c(1, 2)
+  )
+
+validation_filters <- basic_filters |>
+  group_by(cpf_hid, wave) |>
+  filter(n() == 2, sum(female) == 1) |>
+  ungroup()
+```
+
+I will make sure that the the panel characteristic is present for everyone. Also work with more recent data now.
+
+```{r}
+clean_psid <- validation_filters |>
+  filter(length(unique(wave)) > 1, .by = cpf_hid) |>
+  filter(wavey > 2000)
+```
+
+I know code the wife earns more variable.
+
+```{r}
+regression_df <- clean_psid |>
+  filter(emplst6 == 1, !is.na(incjob1_mg), incjob1_mg > 0) |>
+  group_by(cpf_hid, wave) |>
+  mutate(
+    female_income_share = if_else(female == 1, incjob1_mg / sum(incjob1_mg), NA),
+    wife_earns_more = if_else(female_income_share > 0.5, 1, 0)
+  )
+```
+
+Some basic checks to see if it worked.
+
+```{r}
+regression_df |>
+  filter(!is.na(female_income_share)) |>
+  pull(female_income_share) |>
+  density() |>
+  plot()
+```
+
+It doesn't work because there are n = 1 groups, so I need to do this in a different order.
+
+```{r}
+psid_new <- psid |>
+  select(cpf_pid, cpf_hid, wave, female, hisp, rel, nphh, emplst6, incjob1_mg) |>
+  filter(
+    if_all(everything(), \(x) !is.na(x)),
+    incjob1_mg > 0,
+    rel %in% c(1, 2),
+    nphh > 1,
+    emplst6 == 1
+  ) |>
+  group_by(cpf_hid, wave) |>
+  filter(n() == 2, sum(female) == 1) |>
+  mutate(
+    income_share = incjob1_mg / sum(incjob1_mg),
+    wife_earns_more = case_when(
+      female == 1 & income_share >= 0.5 ~ 1,
+      female == 0 & income_share < 0.5 ~ 1,
+      TRUE ~ 0
+    )
+  ) |>
+  ungroup()
+```
+
+Basic tests.
+
+```{r}
+psid_new |>
+  filter(female == 1, hisp == 1) |>
+  pull(income_share) |>
+  density() |>
+  plot()
+
+psid_new |>
+  filter(female == 1, hisp == 0) |>
+  pull(income_share) |>
+  density() |>
+  plot()
+```
