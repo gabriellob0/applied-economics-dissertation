@@ -7,7 +7,7 @@ library(fixest)
 psid <- read_feather("data/raw/psid_hufe.arrow")
 
 con <- dbConnect(duckdb(), dbdir = ":memory:")
-duckdb_register(con, "psid", psid, overwrite = TRUE)
+duckdb_register(con, "psid", psid)
 
 clean <- tbl(con, "psid") |>
   select(cpf_pid, cpf_hid, wave, rel, nphh, female, hisp, emplst6, incjob1_mg, hwork) |>
@@ -28,13 +28,14 @@ coded <- clean |>
       female == 1 & income_share >= 0.5 ~ 1,
       female == 0 & income_share < 0.5 ~ 1,
       TRUE ~ 0
-    )
+    ),
+    mixed_couple = if_else(sum(hisp) == 1, 1, 0)
   ) |>
   ungroup()
 
 test <- collect(coded)
 
-females <- filter(test, female == 1)
+females <- filter(test, female == 1, mixed_couple == 0)
 
 pols_model <- lm(hwork ~ wife_earns_more*hisp, females)
 fe_model <- feols(hwork ~ wife_earns_more*hisp | wave + cpf_pid, females)
