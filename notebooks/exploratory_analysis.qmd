@@ -17,6 +17,17 @@ library("dplyr")
 psid <- read_dta(here("data", "raw", "psid_hufe.dta"))
 ```
 
+Filter columns that are not all/any NA
+
+```{r}
+psid_cols_any <- psid |>
+  select(where(\(x) any(!is.na(x))))
+
+psid_cols_all <- psid |>
+  select(where(\(x) all(!is.na(x))))
+```
+
+
 I am going to look at some basic summary stats first. How many years and countries. There should be only one country as this is US data.
 
 ```{r}
@@ -33,6 +44,7 @@ Now look at all the variables.
 
 ```{r}
 colnames(psid)
+#summary(psid)
 ```
 
 I want to check if the *pid* and *cpf_pid* columns have correspondence in uniqueness (i.e., observations that share one value for one column also share one value for another).
@@ -161,4 +173,11 @@ psid_new |>
   pull(income_share) |>
   density() |>
   plot()
+```
+
+Testing how to keep column names separated
+
+```{r}
+test <- c("edu4")
+test2 <- select(psid, !!test)
 ```
