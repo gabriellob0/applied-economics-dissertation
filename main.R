@@ -1,19 +1,27 @@
 # dependencies ----
-library(arrow)
-library(duckdb)
-library(dplyr)
-library(fixest)
-library(stringr)
-library(purrr)
-library(broom)
-library(tidyr)
+source("src/load_packages.R")
 
+required_packages <- c(
+  "arrow",
+  "duckdb",
+  "dplyr",
+  "fixest",
+  "stringr",
+  "purrr",
+  "broom",
+  "tidyr",
+  "gt"
+)
+
+load_packages(required_packages)
+
+
+# data imports ----
 psid_fpath <- "data/raw/psid_hufe.arrow"
-#colnames(read_feather(psid_fpath))
 
-#TODO: consider cbirth and immiyear
 psid <- read_feather(
   psid_fpath,
+  # TODO: consider cbirth and immiyear
   col_select = c(
     cpf_pid, cpf_hid, wave, wavey, rel, female, age, edu4, kidsn_hh17, nphh, emplst6, incjob1_mg, hhinc_post, hisp, hwork, rstate
   )
@@ -32,7 +40,7 @@ psid_filter_qries <- tbl(con, "psid") |>
     rel %in% c(1, 2),
     between(age, 18, 65),
     edu4 > 0,
-    nphh > 1,
+    nphh > 1, # TODO: probably can remove
     emplst6 == 1,
     incjob1_mg > 0,
     hhinc_post > 0
@@ -61,26 +69,50 @@ psid_qry <- collect(psid_group_qries)
 psid_model_data <- psid_qry |>
   mutate(edu4 = as.factor(edu4), part_edu = as.factor(part_edu), rstate = as.factor(rstate)) |>
   filter(mixed_couple == 0) |>
-  select(-mixed_couple, -rel, -kidsn_hh17, -nphh, -emplst6) |>
-  group_nest(female)
+  select(-mixed_couple, -rel, -kidsn_hh17, -nphh, -emplst6)
 
 
-# models ----
+# specifications ----
 controls <- "log(incjob1_mg) + log(part_income) + log(hhinc_post) + edu4 + part_edu + poly(age, 2) + poly(part_age, 2) + kids + rstate"
 
-pols_formula <- str_flatten(c("hwork ~ (wife_earns_more + hisp)^2 + female_income_share", controls), collapse = " + ")
+pols_formula <- str_flatten(c("hwork ~ wife_earns_more*hisp + female_income_share", controls), collapse = " + ")
 fe_formula <- str_flatten(c(pols_formula, "cpf_pid + wavey"), collapse = " | ")
 
 
-# draft ----
+# modelling ----
 psid_models <- psid_model_data |>
+  group_nest(female) |>
   mutate(
     pols = map(data, \(x) lm(as.formula(pols_formula), data = x)),
     fe = map(data, \(x) feols(as.formula(fe_formula), data = x))
   )
 
-test <- psid_models |>
-  pivot_longer(!c(female,data), names_to = "specification", values_to = "model") |>
+summary(psid_models[[4]][[2]], vcov = "twoway")
+
+reg_coef <- psid_models |>
+  pivot_longer(c(pols, fe), names_to = "specification", values_to = "model") |>
   mutate(coef = map(model, tidy)) |>
   select(female, specification, coef) |>
   unnest(cols = c(coef))
+
+
+# tables ----
+table_data <- reg_coef |>
+  filter(term %in% c("wife_earns_more", "wife_earns_more:hisp", "hisp")) |>
+  mutate(
+    stars = case_when(
+      between(p.value, 0.05, 0.1) ~ "*",
+      between(p.value, 0.01, 0.05) ~ "**",
+      p.value < 0.01 ~ "***",
+      TRUE ~ ""
+    ),
+    coef_stats = str_c(estimate, stars, "<br>(", std.error, ")")
+  ) |>
+  select(female, specification, term, coef_stats) |>
+  pivot_wider(names_from = "specification", values_from = "coef_stats")
+
+
+reg_table <- table_data |>
+  gt(rowname_col = "term", groupname_col = "female") |>
+  tab_stubhead(label = "Panel") |>
+  fmt_markdown(columns = everything())
