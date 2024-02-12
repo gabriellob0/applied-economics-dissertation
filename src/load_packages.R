@@ -1,5 +1,8 @@
-# This function checks if packages are installed, installed them if not, and
-# loads thems. Packages are named inside a vector of strings.
+# load_packages.R
+# Ensures required packages are loaded.
+
+# Checks if packages are installed, installed them if not, and
+# loads them. Packages are named inside a vector of strings.
 
 load_packages <- function(packages = c("dplyr")) {
   is_installed <- function(pack) {

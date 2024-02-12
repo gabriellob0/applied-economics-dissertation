@@ -1,6 +1,7 @@
 # dependencies ----
 source("src/load_packages.R")
 source("src/data_import.R")
+source("src/query_processing.R")
 
 required_packages <- c(
   "arrow",
@@ -30,36 +31,12 @@ duckdb_register(con, "psid", psid)
 
 
 # query ----
-psid_filter_qries <- tbl(con, "psid") |>
-  filter(
-    if_all(everything(), \(x) !is.na(x)),
-    rel %in% c(1, 2),
-    between(age, 18, 65),
-    edu4 > 0,
-    emplst6 == 1,
-    incjob1_mg > 0,
-    hhinc_post > 0
-  )
-
-psid_group_qries <- psid_filter_qries |>
-  group_by(cpf_hid, wavey) |>
-  filter(n() == 2, sum(female) == 1) |>
-  mutate(
-    part_income = sum(incjob1_mg) - incjob1_mg,
-    female_income_share = if_else(
-      female == 1, incjob1_mg / sum(incjob1_mg), part_income / sum(incjob1_mg)
-    ),
-    wife_earns_more = if_else(female_income_share >= 0.5, 1, 0),
-    part_age = sum(age) - age,
-    part_edu = sum(edu4) - edu4,
-    mixed_couple = if_else(sum(hisp) == 1, 1, 0),
-    kids = if_else(kidsn_hh17 > 0, 1, 0)
-  ) |>
-  ungroup()
+psid_query <- perform_data_filtering(con, "psid") |>
+  group_and_mutate_data()
 
 
 # processing ----
-psid_qry <- collect(psid_group_qries)
+psid_qry <- collect(psid_query)
 
 psid_model_data <- psid_qry |>
   mutate(edu4 = as.factor(edu4), part_edu = as.factor(part_edu), rstate = as.factor(rstate)) |>
