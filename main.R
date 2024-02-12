@@ -42,10 +42,7 @@ psid_model_data <- prepare_model_data(psid_queried)
 
 
 # specifications ----
-controls <- "log(incjob1_mg) + log(part_income) + log(hhinc_post) + edu4 + part_edu + poly(age, 2) + poly(part_age, 2) + kids + rstate"
-
-pols_formula <- str_flatten(c("hwork ~ wife_earns_more*hisp + female_income_share", controls), collapse = " + ")
-fe_formula <- str_flatten(c(pols_formula, "cpf_pid + wavey"), collapse = " | ")
+model_formulas <- generate_model_specifications()
 
 
 # modelling ----
