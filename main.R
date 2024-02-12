@@ -2,6 +2,7 @@
 source("src/load_packages.R")
 source("src/data_import.R")
 source("src/query_processing.R")
+source("src/data_processing.R")
 
 required_packages <- c(
   "arrow",
@@ -36,12 +37,8 @@ psid_query <- perform_data_filtering(con, "psid") |>
 
 
 # processing ----
-psid_qry <- collect(psid_query)
-
-psid_model_data <- psid_qry |>
-  mutate(edu4 = as.factor(edu4), part_edu = as.factor(part_edu), rstate = as.factor(rstate)) |>
-  filter(mixed_couple == 0) |>
-  select(-mixed_couple, -rel, -kidsn_hh17, -emplst6)
+psid_queried <- collect(psid_query)
+psid_model_data <- prepare_model_data(psid_queried)
 
 
 # specifications ----
