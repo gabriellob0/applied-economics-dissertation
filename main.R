@@ -1,5 +1,6 @@
 # dependencies ----
 source("src/load_packages.R")
+source("src/data_import.R")
 
 required_packages <- c(
   "arrow",
@@ -16,16 +17,11 @@ required_packages <- c(
 load_packages(required_packages)
 
 
-# data imports ----
+# import data ----
 psid_fpath <- "data/raw/psid_hufe.arrow"
 
-psid <- read_feather(
-  psid_fpath,
-  # TODO: consider cbirth and immiyear
-  col_select = c(
-    cpf_pid, cpf_hid, wave, wavey, rel, female, age, edu4, kidsn_hh17, nphh, emplst6, incjob1_mg, hhinc_post, hisp, hwork, rstate
-  )
-)
+# TODO: consider cbirth and immiyear
+psid <- read_psid_data(psid_fpath)
 
 
 # db connection ----
@@ -40,14 +36,13 @@ psid_filter_qries <- tbl(con, "psid") |>
     rel %in% c(1, 2),
     between(age, 18, 65),
     edu4 > 0,
-    nphh > 1, # TODO: probably can remove
     emplst6 == 1,
     incjob1_mg > 0,
     hhinc_post > 0
   )
 
 psid_group_qries <- psid_filter_qries |>
-  group_by(cpf_hid, wave) |>
+  group_by(cpf_hid, wavey) |>
   filter(n() == 2, sum(female) == 1) |>
   mutate(
     part_income = sum(incjob1_mg) - incjob1_mg,
@@ -69,7 +64,7 @@ psid_qry <- collect(psid_group_qries)
 psid_model_data <- psid_qry |>
   mutate(edu4 = as.factor(edu4), part_edu = as.factor(part_edu), rstate = as.factor(rstate)) |>
   filter(mixed_couple == 0) |>
-  select(-mixed_couple, -rel, -kidsn_hh17, -nphh, -emplst6)
+  select(-mixed_couple, -rel, -kidsn_hh17, -emplst6)
 
 
 # specifications ----
@@ -116,3 +111,14 @@ reg_table <- table_data |>
   gt(rowname_col = "term", groupname_col = "female") |>
   tab_stubhead(label = "Panel") |>
   fmt_markdown(columns = everything())
+
+#TODO: it is estimating stuff for hisp in my FE model, which should be impossible
+psid_model_data |>
+  filter(female == 1) |>
+  group_by(cpf_pid, wavey) |>
+  filter(length(unique(hisp)) != 1)
+
+psid_model_data %>%
+  group_by(cpf_pid) %>%
+  summarize(num_unique_hisp = n_distinct(hisp)) %>%
+  summarize(max_num_unique_hisp = max(num_unique_hisp))

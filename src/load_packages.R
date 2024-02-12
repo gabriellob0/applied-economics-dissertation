@@ -16,3 +16,18 @@ load_packages <- function(packages = c("dplyr")) {
   install.packages(uninstalled)
   invisible(lapply(packages, library, character.only = TRUE))
 }
+
+# Example usage:
+# required_packages <- c(
+#   "arrow",
+#   "duckdb",
+#   "dplyr",
+#   "fixest",
+#   "stringr",
+#   "purrr",
+#   "broom",
+#   "tidyr",
+#   "gt"
+# )
+
+# load_packages(required_packages)
