@@ -1,0 +1,11 @@
+Assuming all the data is loaded.
+
+First question: What do we find without thinking about hispanicity, following Bertrand. (i)
+
+```{r}
+test_data <- psid_model_data |>
+  filter(female == 1, wavey > 2000)
+
+pols_without_hisp <- feols(hwork ~ wife_earns_more + female_income_share + log(incjob1_mg) + log(part_income + log(hhinc_post)) + poly(age, 2) + poly(part_age, 2) + kids | cpf_pid + wavey + rstate, test_data, split = ~ hisp, vcov = twoway ~ cpf_pid + wavey)
+etable(pols_without_hisp)
+```

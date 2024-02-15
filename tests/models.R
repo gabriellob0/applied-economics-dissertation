@@ -1,3 +1,4 @@
+# draft 1 ----
 testing_data <- psid_model_data |>
   filter(female == 1)
 
@@ -18,3 +19,6 @@ fixest_split <- feols(as.formula(new_forfe), psid_model_data, split = ~ female)
 summary(fixest_split, vcov = "twoway")
 
 etable(fixest_split)
+
+
+# draft 2 ----

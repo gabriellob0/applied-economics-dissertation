@@ -20,7 +20,7 @@ load_packages(required_packages)
 
 
 # import data ----
-psid_fpath <- "data/raw/psid_hufe.arrow"
+psid_fpath <- "data/interim/psid_hufe.arrow"
 
 # TODO: consider cbirth and immiyear
 psid <- read_psid_data(psid_fpath)
