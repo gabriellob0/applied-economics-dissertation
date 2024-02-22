@@ -1,5 +1,5 @@
 # dependencies ----
-source("src/load_packages.R")
+source("src/utils.R")
 source("src/data_import.R")
 source("src/query_processing.R")
 source("src/data_processing.R")
