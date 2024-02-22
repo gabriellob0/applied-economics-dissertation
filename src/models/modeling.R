@@ -6,8 +6,8 @@ estimate_models <- function(data_tbl, pols_formula, fe_formula) {
   data_tbl |>
     group_nest(female) |>
     mutate(
-      pols = map(data, \(x) feols(as.formula(model_formulas$pols_formula), data = x)),
-      fe = map(data, \(x) feols(as.formula(model_formulas$fe_formula), data = x))
+      pols = map(data, \(x) feols(as.formula(pols_formula), data = x)),
+      fe = map(data, \(x) feols(as.formula(fe_formula), data = x))
     )
 }
 

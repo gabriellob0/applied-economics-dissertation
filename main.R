@@ -5,6 +5,7 @@ source("src/features/query.R")
 source("src/features/prepare_model_data.R")
 source("src/models/model_specifications.R")
 source("src/models/modeling.R")
+source("src/visualisation/regression_tables.R")
 
 required_packages <- c(
   "arrow",
@@ -48,15 +49,18 @@ model_formulas <- generate_model_specifications()
 
 
 # modelling ----
+#TODO: need to think about the standard errors
 psid_models <- estimate_models(psid_model_data, model_formulas$pols_formula, model_formulas$fe_formula)
+generate_regression_table(c(psid_models$pols, psid_models$fe))
+
 
 psid_models$fe[[1]]$collin.var
 
-reg_coefs <- summarise_model_results(psid_models)
+#reg_coefs <- summarise_model_results(psid_models)
 
 
 # tables ----
-#TODO: it is estimating stuff for hisp in my FE model, which should be impossible
+# TODO: it is estimating stuff for hisp in my FE model, which should be impossible
 psid_model_data |>
   filter(female == 1) |>
   group_by(cpf_pid, wavey) |>
