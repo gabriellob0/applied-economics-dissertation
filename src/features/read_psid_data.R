@@ -10,6 +10,8 @@ read_psid_data <- function(filepath) {
       female, # female dummy
       age,
       edu4,
+      mlstat5, # marital status
+      livpart,
       kidsn_hh17, # kids under 17
       emplst6,
       incjob1_mg,

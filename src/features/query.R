@@ -1,4 +1,4 @@
-# query_processing.R
+# query.R
 # Handles querying and filtering data within the DB connection
 
 # Function to perform data filtering based on specific criteria
@@ -9,6 +9,8 @@ perform_data_filtering <- function(con, table_name) {
       rel %in% c(1, 2),
       between(age, 18, 65),
       edu4 > 0,
+      mlstat5 == 1,
+      livpart == 1,
       emplst6 == 1,
       incjob1_mg > 0,
       hhinc_post > 0

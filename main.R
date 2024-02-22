@@ -1,8 +1,9 @@
 # dependencies ----
 source("src/utils.R")
-source("src/data_import.R")
-source("src/query_processing.R")
-source("src/data_processing.R")
+source("src/features/read_psid_data.R")
+source("src/features/query.R")
+source("src/features/prepare_model_data.R")
+source("src/models/model_specifications.R")
 
 required_packages <- c(
   "arrow",

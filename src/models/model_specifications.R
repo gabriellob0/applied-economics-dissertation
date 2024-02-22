@@ -3,9 +3,23 @@
 
 # Function to generate model formulas as string
 generate_model_specifications <- function() {
-  controls <- "log(incjob1_mg) + log(part_income) + log(hhinc_post) + edu4 + part_edu + poly(age, 2) + poly(part_age, 2) + kids + rstate"
+  controls <- str_flatten(
+    c(
+      "female_income_share",
+      "log(incjob1_mg)",
+      "log(part_income)",
+      "log(hhinc_post)",
+      "edu4",
+      "part_edu",
+      "poly(age, 2)",
+      "poly(part_age, 2)",
+      "kids",
+      "rstate"
+    ),
+    collapse = " + "
+  )
 
-  pols_formula <- str_flatten(c("hwork ~ wife_earns_more * hisp + female_income_share", controls), collapse = " + ")
+  pols_formula <- str_flatten(c("hwork ~ wife_earns_more * hisp", controls), collapse = " + ")
   fe_formula <- str_flatten(c(pols_formula, "cpf_pid + wavey"), collapse = " | ")
 
   lst(

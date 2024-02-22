@@ -1,4 +1,4 @@
-# data_processing.R
+# wrangling.R
 # Prepares data for modeling
 
 # Function to finalize data for modeling
@@ -10,7 +10,7 @@ prepare_model_data <- function(data_tbl) {
       rstate = as.factor(rstate)
     ) |>
     filter(mixed_couple == 0) |>
-    select(-mixed_couple, -rel, -kidsn_hh17, -emplst6)
+    select(-mixed_couple, -rel, -kidsn_hh17, -emplst6, -mlstat5, -livpart)
 }
 
 # Example usage:
