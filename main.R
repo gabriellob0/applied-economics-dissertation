@@ -4,6 +4,7 @@ source("src/features/read_psid_data.R")
 source("src/features/query.R")
 source("src/features/prepare_model_data.R")
 source("src/models/model_specifications.R")
+source("src/models/modeling.R")
 
 required_packages <- c(
   "arrow",
@@ -47,43 +48,14 @@ model_formulas <- generate_model_specifications()
 
 
 # modelling ----
-psid_models <- psid_model_data |>
-  group_nest(female) |>
-  mutate(
-    pols = map(data, \(x) lm(as.formula(pols_formula), data = x)),
-    fe = map(data, \(x) feols(as.formula(fe_formula), data = x))
-  )
+psid_models <- estimate_models(psid_model_data, model_formulas$pols_formula, model_formulas$fe_formula)
 
-summary(psid_models[[4]][[2]], vcov = "twoway")
+psid_models$fe[[1]]$collin.var
 
-reg_coef <- psid_models |>
-  pivot_longer(c(pols, fe), names_to = "specification", values_to = "model") |>
-  mutate(coef = map(model, tidy)) |>
-  select(female, specification, coef) |>
-  unnest(cols = c(coef))
+reg_coefs <- summarise_model_results(psid_models)
 
 
 # tables ----
-table_data <- reg_coef |>
-  filter(term %in% c("wife_earns_more", "wife_earns_more:hisp", "hisp")) |>
-  mutate(
-    stars = case_when(
-      between(p.value, 0.05, 0.1) ~ "*",
-      between(p.value, 0.01, 0.05) ~ "**",
-      p.value < 0.01 ~ "***",
-      TRUE ~ ""
-    ),
-    coef_stats = str_c(estimate, stars, "<br>(", std.error, ")")
-  ) |>
-  select(female, specification, term, coef_stats) |>
-  pivot_wider(names_from = "specification", values_from = "coef_stats")
-
-
-reg_table <- table_data |>
-  gt(rowname_col = "term", groupname_col = "female") |>
-  tab_stubhead(label = "Panel") |>
-  fmt_markdown(columns = everything())
-
 #TODO: it is estimating stuff for hisp in my FE model, which should be impossible
 psid_model_data |>
   filter(female == 1) |>
