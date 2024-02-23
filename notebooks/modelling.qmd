@@ -6,6 +6,48 @@ First question: What do we find without thinking about hispanicity, following Be
 test_data <- psid_model_data |>
   filter(female == 1, wavey > 2000)
 
-pols_without_hisp <- feols(hwork ~ wife_earns_more + female_income_share + log(incjob1_mg) + log(part_income + log(hhinc_post)) + poly(age, 2) + poly(part_age, 2) + kids | cpf_pid + wavey + rstate, test_data, split = ~ hisp, vcov = twoway ~ cpf_pid + wavey)
+pols_without_hisp <- feols(hwork ~ wife_earns_more + female_income_share + log(incjob1_mg) + log(part_income + log(hhinc_post)) + poly(age, 2) + poly(part_age, 2) + kids | cpf_pid + wavey + rstate, test_data, split = ~hisp, vcov = twoway ~ cpf_pid + wavey)
 etable(pols_without_hisp)
+```
+
+Split sample analysis
+
+```{r}
+test <- psid_model_data |>
+  group_nest(female, hisp) |>
+  mutate(
+    pols = map(data, \(x) feols(
+      hwork ~ wife_earns_more + female_income_share + log(incjob1_mg) + log(part_income) + log(hhinc_post) + edu4 + part_edu + poly(age, 2) + poly(part_age, 2) + kids + rstate, data = x
+    )),
+    fe = map(data, \(x) feols(
+      hwork ~ wife_earns_more + female_income_share + log(incjob1_mg) + log(part_income) + log(hhinc_post) + edu4 + part_edu + poly(age, 2) + poly(part_age, 2) + kids + rstate | cpf_pid + wavey, data = x
+    ))
+  )
+```
+```{r}
+#male
+summary(test$fe[[1]])
+summary(test$fe[[2]]) #hisp
+#female
+summary(test$fe[[3]])
+summary(test$fe[[4]]) #hisp
+```
+
+Now interacting everything
+
+```{r}
+test_data <- psid_model_data |>
+  filter(female == 1)
+
+test_model <- feols(
+  hwork ~
+    hisp * (wife_earns_more + female_income_share +
+              log(incjob1_mg) + log(part_income) + log(hhinc_post) +
+              kids + edu4 + part_edu +
+              poly(age, 2) + poly(part_age, 2) + rstate) |
+    cpf_pid + wavey, vcov = "twoway",
+  data = test_data
+)
+
+etable(test_model, signif.code = c("***" = 0.01, "**" = 0.05, "*" = 0.1))
 ```

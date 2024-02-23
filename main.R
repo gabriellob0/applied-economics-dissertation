@@ -42,7 +42,7 @@ psid_query <- perform_data_filtering(con, "psid") |>
 # processing ----
 psid_queried <- collect(psid_query)
 psid_model_data <- prepare_model_data(psid_queried)
-
+#write_feather(psid_model_data, "data/processed/model_data.arrow")
 
 # specifications ----
 model_formulas <- generate_model_specifications()
