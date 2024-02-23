@@ -28,7 +28,7 @@ group_and_mutate_data <- function(data_tbl) {
       female_income_share = if_else(
         female == 1, incjob1_mg / sum(incjob1_mg), part_income / sum(incjob1_mg)
       ),
-      wife_earns_more = if_else(female_income_share >= 0.5, 1, 0),
+      wife_earns_more = if_else(female_income_share > 0.5, 1, 0),
       part_age = sum(age) - age,
       part_edu = sum(edu4) - edu4,
       mixed_couple = if_else(sum(hisp) == 1, 1, 0),

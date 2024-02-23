@@ -14,7 +14,7 @@ library("dplyr")
 ## Data
 
 ```{r}
-psid <- read_dta(here("data", "raw", "psid_hufe.dta"))
+psid <- read_dta(here("data", "interim", "psid_hufe.dta"))
 ```
 
 Filter columns that are not all/any NA

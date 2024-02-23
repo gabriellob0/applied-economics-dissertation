@@ -14,6 +14,8 @@ There exists a large literature on decision making within households. Many relev
 
 > This section should describe the econometric tools to be used in extensions. It should explain what problem they address and why they address them, discuss the remaining limitations attached to these techniques. It is important to demonstrate a good grasp of quantitative methods theory.
 
+I follow a split sample equivalent approach described in Feigenberg, Ost and Qureshi (20XX)
+
 ## Section 3.2 (20 marks)
 
 > This section should present the dataset and its sources, the descriptive statistics and results from the extensions. A discussion of the results robustness and/or any limitations should also be incorporated.
