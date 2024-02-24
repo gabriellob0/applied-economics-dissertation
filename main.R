@@ -13,7 +13,7 @@ required_packages <- c(
   "dplyr",
   "fixest",
   "stringr",
-  "purrr",
+  "purrr", #TODO: consider furrr for parallel
   "broom",
   "tidyr",
   "gt"
@@ -50,11 +50,10 @@ model_formulas <- generate_model_specifications()
 
 # modelling ----
 #TODO: need to think about the standard errors
-psid_models <- estimate_models(psid_model_data, model_formulas$pols_formula, model_formulas$fe_formula)
-generate_regression_table(c(psid_models$pols, psid_models$fe))
+psid_models <- estimate_models(psid_model_data, model_formulas)
+generate_regression_table(psid_models$estimated_models[[1]])
+etable(psid_models$estimated_models[[12]])
 
-
-psid_models$fe[[1]]$collin.var
 
 #reg_coefs <- summarise_model_results(psid_models)
 

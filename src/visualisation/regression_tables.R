@@ -7,8 +7,8 @@
 # Function to generate regression table with predefined parameters
 generate_regression_table <- function(models_list) {
   # Predefined parameters
-  dict_vars <- c(wife_earns_more = "Wife Earns More", hisp = "Hispanic", `wife_earns_more:hisp` = "Interaction")
-  keep_vars <- c("%wife_earns_more", "%hisp", "%wife_earns_more:hisp")
+  dict_vars <- c(wife_earns_more = "Wife Earns More", hisp = "Hispanic", `wife_earns_more:hisp` = "Wife Earns More x Hispanic")
+  keep_vars <- c("%^wife_earns_more$", "%^hisp$", "%^wife_earns_more:hisp$")
   order_vars <- c("wife_earns_more", "hisp", "wife_earns_more:hisp")
   table_title <- "Selected Coefficients from Fixed Effects Models"
   stars <- c("***" = 0.01, "**" = 0.05, "*" = 0.1)

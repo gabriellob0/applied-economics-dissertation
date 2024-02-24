@@ -2,12 +2,19 @@
 # Performs model estimations
 
 # Function to estimate models for each group
-estimate_models <- function(data_tbl, pols_formula, fe_formula) {
+estimate_models <- function(data_tbl, specifications) {
+  spec_tbl <- tibble::enframe(
+    specifications,
+    name = "specification", value = "formula"
+  )
+
   data_tbl |>
     group_nest(female) |>
+    expand_grid(spec_tbl) |>
     mutate(
-      pols = map(data, \(x) feols(as.formula(pols_formula), data = x)),
-      fe = map(data, \(x) feols(as.formula(fe_formula), data = x))
+      estimated_models = map2(
+        formula, data, \(x, y) feols(as.formula(x), data = y)
+      )
     )
 }
 
@@ -22,5 +29,5 @@ summarise_model_results <- function(models_tbl) {
 
 
 # Example usage:
-# modeled_data <- estimate_models(psid_model_data, pols_formula, fe_formula)
-# summarized_results <- summarize_model_results(modeled_data)
+# modeled_data <- estimate_models(psid_model_data, formulas)
+# summarised_results <- summarise_model_results(modeled_data)

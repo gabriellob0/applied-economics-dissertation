@@ -14,11 +14,20 @@ There exists a large literature on decision making within households. Many relev
 
 > This section should describe the econometric tools to be used in extensions. It should explain what problem they address and why they address them, discuss the remaining limitations attached to these techniques. It is important to demonstrate a good grasp of quantitative methods theory.
 
-I follow a split sample equivalent approach described in Feigenberg, Ost and Qureshi (20XX)
+I follow a split sample equivalent approach described in Feigenberg, Ost and Qureshi (20XX).
+
+\[ \text{hwork}_{it} = \beta_0 + \beta_1 \times \text{wife\_earns\_more}_{it} + \beta_2 \times \text{hisp}_{i} + \beta_3 \times (\text{wife\_earns\_more}_{it} \times \text{hisp}_{i}) + \boldsymbol{\gamma}' \times \mathbf{x}_{it} + \boldsymbol{\lambda}' \times (\mathbf{x}_{it} \times \text{hisp}_{i}) + \boldsymbol{\alpha}_{i} + \boldsymbol{\delta}_{t} + u_{it} \]
+
 
 ## Section 3.2 (20 marks)
 
 > This section should present the dataset and its sources, the descriptive statistics and results from the extensions. A discussion of the results robustness and/or any limitations should also be incorporated.
+
+> Kalmijn, Loeve, and Manting (2007) argue that the impact of relative income on dissolution differs across married and cohabiting couples.
+
+So I restric the sample only to married couples.
+
+> In column (3) we include a control for relativeIncomei. That is particularly important in this context because standard Beckerian forces will lead the wife to do less housework when her contribution to family income increases.
 
 ## TODO List
 
