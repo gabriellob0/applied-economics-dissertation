@@ -14,9 +14,9 @@ required_packages <- c(
   "fixest",
   "stringr",
   "purrr", #TODO: consider furrr for parallel
-  "broom",
-  "tidyr",
-  "gt"
+  #"broom",
+  "tidyr"#,
+  #"gt"
 )
 
 load_packages(required_packages)
@@ -51,21 +51,21 @@ model_formulas <- generate_model_specifications()
 # modelling ----
 #TODO: need to think about the standard errors
 psid_models <- estimate_models(psid_model_data, model_formulas)
-generate_regression_table(psid_models$estimated_models[[1]])
-etable(psid_models$estimated_models[[12]])
-
-
-#reg_coefs <- summarise_model_results(psid_models)
 
 
 # tables ----
-# TODO: it is estimating stuff for hisp in my FE model, which should be impossible
-psid_model_data |>
-  filter(female == 1) |>
-  group_by(cpf_pid, wavey) |>
-  filter(length(unique(hisp)) != 1)
+#config_modelsummary(factory_default = 'tinytable')
 
-psid_model_data %>%
-  group_by(cpf_pid) %>%
-  summarize(num_unique_hisp = n_distinct(hisp)) %>%
-  summarize(max_num_unique_hisp = max(num_unique_hisp))
+table_data <- psid_models |>
+  filter(female == 1) |>
+  mutate(
+    panel = if_else(female == 1, "Female", "Male"),
+    title = str_replace_all(specification, "_", " "),
+    title = str_c(
+      str_to_upper(str_extract(title, "^[^ ]+")), str_to_title(str_extract(title, " [^ ]+$")), sep = " "
+    )
+  ) |>
+  select(title, estimated_models) |>
+  tibble::deframe()
+
+modelsummary(table_data, gof_omit = "All", coef_omit = "^(?!^(hisp|wife_earns_more|hisp:wife_earns_more)$).*$")

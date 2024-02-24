@@ -63,36 +63,26 @@ generate_model_specifications <- function() {
   )
 
   # fixed effects ----
-  # TODO: I can actually simplify all of these by simply removing hisp using the - sign and *
   fe_baseline <- str_flatten(
     c(
-      dependent_variable,
-      str_flatten(baseline_explanatory_variables, collapse = " + "),
-      " + ",
-      str_flatten(str_c("hisp:", baseline_explanatory_variables), collapse = " + "),
-      " | ",
+      pols_baseline,
+      " - hisp | ",
       str_flatten(fixed_effects, collapse = " + ")
     )
   )
 
   fe_controls <- str_flatten(
     c(
-      dependent_variable,
-      str_flatten(c(baseline_explanatory_variables, income_controls, non_income_controls), collapse = " + "),
-      " + ",
-      str_flatten(str_c("hisp:", c(baseline_explanatory_variables, income_controls, non_income_controls), collapse = " + ")),
-      " | ",
+      pols_controls,
+      " - hisp | ",
       str_flatten(fixed_effects, collapse = " + ")
     )
   )
 
   fe_cubics <- str_flatten(
     c(
-      dependent_variable,
-      str_flatten(c(baseline_explanatory_variables, income_cubic_controls, non_income_controls), collapse = " + "),
-      " + ",
-      str_flatten(str_c("hisp:", c(baseline_explanatory_variables, income_cubic_controls, non_income_controls), collapse = " + ")),
-      " | ",
+      pols_cubics,
+      " - hisp | ",
       str_flatten(fixed_effects, collapse = " + ")
     )
   )
