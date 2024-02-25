@@ -5,52 +5,45 @@
 
 
 # Function to generate regression table with predefined parameters
-generate_regression_table <- function(models_list) {
-  # Predefined parameters
-  dict_vars <- c(wife_earns_more = "Wife Earns More", hisp = "Hispanic", `wife_earns_more:hisp` = "Wife Earns More x Hispanic")
-  keep_vars <- c("%^wife_earns_more$", "%^hisp$", "%^wife_earns_more:hisp$")
-  order_vars <- c("wife_earns_more", "hisp", "wife_earns_more:hisp")
-  table_title <- "Selected Coefficients from Fixed Effects Models"
-  stars <- c("***" = 0.01, "**" = 0.05, "*" = 0.1)
-  
-  # Generation of the regression table
-  etable(
-    models_list,
-    dict = dict_vars,
-    keep = keep_vars,
-    order = order_vars,
-    title = table_title,
-    signif.code = c("***" = 0.01, "**" = 0.05, "*" = 0.1)
-  )
+prepare_regression_table <- function(model_coef_tbl) {
+  cleaned_coefs <- model_coef_tbl |>
+    filter(term %in% c("wife_earns_more", "hisp:wife_earns_more", "hisp")) |>
+    mutate(
+      female = if_else(female == 1, "Panel A: Women", "Panel B: Men"),
+      estimates = str_c(sprintf("%.3f", estimate), "\n(", sprintf("%.3f", std.error), ")")
+    )
+
+  wide_tbl <- cleaned_coefs |>
+    select(female, specification, term, estimates) |>
+    pivot_wider(
+      names_from = specification,
+      values_from = estimates,
+      values_fill = "-"
+    ) |>
+    group_by(female)
 }
 
-# Note: To use this function, ensure you provide a correctly structured `models_list`
-# Example call (assuming `psid_models` is defined elsewhere in your code):
-# models_flat <- c(psid_models$pols, psid_models$fe)
-# generate_regression_table(models_flat)
 
-# draft ----
-# Describe functions
-# TODO: put into functions
+# Function
+generate_regression_table <- function(regression_tbl) {
+  order_panels <- c("Panel A: Women", "Panel B: Men")
 
-#table_data <- reg_coefs |>
-#  filter(term %in% c("wife_earns_more", "wife_earns_more:hisp", "hisp")) |>
-#  mutate(
-#    stars = case_when(
-#      between(p.value, 0.05, 0.1) ~ "*",
-#      between(p.value, 0.01, 0.05) ~ "**",
-#      p.value < 0.01 ~ "***",
-#      TRUE ~ ""
-#    ),
-#    coef_stats = str_c(estimate, stars, "<br>(", std.error, ")")
-#  ) |>
-#  select(female, specification, term, coef_stats) |>
-#  pivot_wider(names_from = "specification", values_from = "coef_stats")
-#
-#
-#reg_table <- table_data |>
-#  gt(rowname_col = "term", groupname_col = "female") |>
-#  tab_stubhead(label = "Panel") |>
-#  fmt_markdown(columns = everything())
-
-#reg_table
+  basic_tbl <- regression_tbl |>
+    arrange(factor(female, leve = order_panels)) |>
+    gt(rowname_col = "term") |>
+    tab_header(title = "Regression Table")
+  
+  basic_tbl |>
+    cols_label(
+      pols_baseline = "(1)",
+      pols_controls = "(2)",
+      pols_cubics = "(3)",
+      fe_baseline = "(4)",
+      fe_controls = "(5)",
+      fe_cubics = "(6)"
+    ) |>
+    cols_align(
+      align = "center",
+      columns = starts_with(c("pols", "fe"))
+    )
+}

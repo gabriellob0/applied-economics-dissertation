@@ -21,8 +21,7 @@ estimate_models <- function(data_tbl, specifications) {
 # Function to summarize model results
 summarise_model_results <- function(models_tbl) {
   models_tbl |>
-    pivot_longer(c(pols, fe), names_to = "specification", values_to = "model") |>
-    mutate(coef = map(model, tidy)) |>
+    mutate(coef = map(estimated_models, tidy)) |>
     select(female, specification, coef) |>
     unnest(cols = c(coef))
 }
