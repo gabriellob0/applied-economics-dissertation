@@ -53,13 +53,19 @@ model_formulas <- generate_model_specifications()
 # modelling ----
 # TODO: need to think about the standard errors
 psid_models <- estimate_models(psid_model_data, model_formulas)
-summarised_models <- summarise_model_results(psid_models)
+
+model_estimates <- tidy_model_estimates(psid_models)
+model_statistics <- psid_models |>
+  generate_model_statistics() |>
+  format_model_stats()
 
 
 # tables ----
-model_descriptions <- add_specification_rows(summarised_models)
+model_descriptions <- generate_specification_rows(model_estimates)
 
-summarised_models |>
+model_estimates |>
   prepare_regression_table() |>
   generate_regression_table() |>
-  rows_add(.list = model_descriptions)
+  rows_add(.list = model_descriptions)# |>
+  #rows_add(.list = model_statistics$data[[2]])
+

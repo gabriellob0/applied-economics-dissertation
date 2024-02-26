@@ -37,7 +37,7 @@ generate_regression_table <- function(regression_tbl) {
     arrange(factor(female, leve = order_panels)) |>
     gt(rowname_col = "term") |>
     tab_header(title = "Regression Table")
-  
+
   basic_tbl |>
     cols_label(
       pols_baseline = "(1)",
@@ -55,7 +55,7 @@ generate_regression_table <- function(regression_tbl) {
 
 
 # Function to add additional information to table
-add_specification_rows <- function(model_coef_tbl) {
+generate_specification_rows <- function(model_coef_tbl) {
   model_coef_tbl |>
     distinct(specification) |>
     mutate(
@@ -63,7 +63,18 @@ add_specification_rows <- function(model_coef_tbl) {
       `Cubics` = if_else(str_detect(specification, "cubics"), "Yes", "No"),
       `Fixed Effects` = if_else(str_detect(specification, "fe"), "Yes", "No")
     ) |>
-    pivot_longer(-specification, names_to = "term", values_to = "Value") |>
-    pivot_wider(names_from = specification, values_from = Value) |>
+    pivot_longer(-specification, names_to = "term", values_to = "value") |>
+    pivot_wider(names_from = specification, values_from = value) |>
     as.list()
+}
+
+# Function to format model statistics for gt table
+format_model_stats <- function(model_stats_tbl) {
+  model_stats_tbl |>
+    pivot_longer(adj.r.squared:nhouseholds) |>
+    pivot_wider(names_from = specification, values_from = value) |>
+    rename(term = name) |>
+    mutate(across(everything(), as.character)) |>
+    group_nest(female) |>
+    mutate(data = map(data, as.list))
 }
