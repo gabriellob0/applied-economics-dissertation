@@ -66,16 +66,16 @@ style_regression_table <- function(regression_tbl) {
     ) |>
     sub_missing() |>
     cols_label(
-      pols_baseline = "(1)",
-      pols_controls = "(2)",
-      pols_cubics = "(3)",
-      fe_baseline = "(4)",
-      fe_controls = "(5)",
-      fe_cubics = "(6)"
+      estimate_pols_baseline = "(1)",
+      estimate_pols_controls = "(2)",
+      estimate_pols_cubics = "(3)",
+      estimate_fe_baseline = "(4)",
+      estimate_fe_controls = "(5)",
+      estimate_fe_cubics = "(6)"
     ) |>
     cols_align(
       align = "center",
-      columns = starts_with(c("pols", "fe"))
+      columns = starts_with("estimate")
     )
 }
 
