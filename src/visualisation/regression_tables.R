@@ -44,8 +44,7 @@ generate_regression_table <- function(regression_tbl, formulas) {
   basic_tbl <- regression_tbl |>
     mutate(across(everything(), as.character)) |>
     arrange(factor(female, level = order_panels)) |>
-    gt(rowname_col = "term") |>
-    tab_header(title = "Regression Table")
+    gt(rowname_col = "term")
 
   for (pair in column_pairs) {
     basic_tbl <- basic_tbl |>
@@ -60,7 +59,24 @@ generate_regression_table <- function(regression_tbl, formulas) {
 
 # Function to style regression table
 style_regression_table <- function(regression_tbl) {
-  
+  regression_tbl |>
+    tab_header(
+      title = "Table II",
+      subtitle = "Violating Gender Norm and Household Production Across Hispanics and Non-Hispanics"
+    ) |>
+    sub_missing() |>
+    cols_label(
+      pols_baseline = "(1)",
+      pols_controls = "(2)",
+      pols_cubics = "(3)",
+      fe_baseline = "(4)",
+      fe_controls = "(5)",
+      fe_cubics = "(6)"
+    ) |>
+    cols_align(
+      align = "center",
+      columns = starts_with(c("pols", "fe"))
+    )
 }
 
 # Function to add additional information to table

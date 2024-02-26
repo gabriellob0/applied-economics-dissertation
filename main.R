@@ -63,7 +63,7 @@ model_estimates <- tidy_model_estimates(psid_models)
 # tables ----
 model_descriptions <- generate_specification_rows(model_estimates)
 
-test <- model_estimates |>
+model_estimates |>
   prepare_regression_table() |>
   generate_regression_table(model_formulas) |>
   rows_add(.list = model_descriptions)# |>
