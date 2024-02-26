@@ -43,6 +43,8 @@ psid_query <- perform_data_filtering(con, "psid") |>
 psid_queried <- collect(psid_query)
 psid_model_data <- prepare_model_data(psid_queried)
 # write_feather(psid_model_data, "data/processed/model_data.arrow")
+# psid_model_data <- arrow::read_feather("data/processed/model_data.arrow")
+
 
 # specifications ----
 model_formulas <- generate_model_specifications()
@@ -53,7 +55,11 @@ model_formulas <- generate_model_specifications()
 psid_models <- estimate_models(psid_model_data, model_formulas)
 summarised_models <- summarise_model_results(psid_models)
 
+
 # tables ----
+model_descriptions <- add_specification_rows(summarised_models)
+
 summarised_models |>
   prepare_regression_table() |>
-  generate_regression_table()
+  generate_regression_table() |>
+  rows_add(.list = model_descriptions)

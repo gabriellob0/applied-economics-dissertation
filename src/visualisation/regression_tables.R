@@ -4,11 +4,16 @@
 # using predefined specifications focused on specific coefficients with the 'fixest' package.
 
 
-# Function to generate regression table with predefined parameters
+# Function to prepare dataframe for table creation
 prepare_regression_table <- function(model_coef_tbl) {
   cleaned_coefs <- model_coef_tbl |>
     filter(term %in% c("wife_earns_more", "hisp:wife_earns_more", "hisp")) |>
     mutate(
+      term = case_when(
+        term == "wife_earns_more" ~ "WifeEarnsMore",
+        term == "hisp" ~ "Hispanic",
+        term == "hisp:wife_earns_more" ~ "Hispanic x WifeEarnsMore"
+      ),
       female = if_else(female == 1, "Panel A: Women", "Panel B: Men"),
       estimates = str_c(sprintf("%.3f", estimate), "\n(", sprintf("%.3f", std.error), ")")
     )
@@ -24,7 +29,7 @@ prepare_regression_table <- function(model_coef_tbl) {
 }
 
 
-# Function
+# Function to generate and style table from dataframe
 generate_regression_table <- function(regression_tbl) {
   order_panels <- c("Panel A: Women", "Panel B: Men")
 
@@ -46,4 +51,19 @@ generate_regression_table <- function(regression_tbl) {
       align = "center",
       columns = starts_with(c("pols", "fe"))
     )
+}
+
+
+# Function to add additional information to table
+add_specification_rows <- function(model_coef_tbl) {
+  model_coef_tbl |>
+    distinct(specification) |>
+    mutate(
+      `Controls` = if_else(str_detect(specification, "baseline"), "No", "Yes"),
+      `Cubics` = if_else(str_detect(specification, "cubics"), "Yes", "No"),
+      `Fixed Effects` = if_else(str_detect(specification, "fe"), "Yes", "No")
+    ) |>
+    pivot_longer(-specification, names_to = "term", values_to = "Value") |>
+    pivot_wider(names_from = specification, values_from = Value) |>
+    as.list()
 }
