@@ -9,50 +9,59 @@ prepare_regression_table <- function(model_coef_tbl) {
   cleaned_coefs <- model_coef_tbl |>
     filter(term %in% c("wife_earns_more", "hisp:wife_earns_more", "hisp")) |>
     mutate(
+      across(everything(as.character)),
       term = case_when(
         term == "wife_earns_more" ~ "WifeEarnsMore",
         term == "hisp" ~ "Hispanic",
         term == "hisp:wife_earns_more" ~ "Hispanic x WifeEarnsMore"
       ),
       female = if_else(female == 1, "Panel A: Women", "Panel B: Men"),
-      estimates = str_c(sprintf("%.3f", estimate), "\n(", sprintf("%.3f", std.error), ")")
+      estimate = case_when(
+        p.value < 0.1 & p.value >= 0.05 ~ str_c(as.character(estimate), "*"),
+        p.value < 0.05 & p.value >= 0.01 ~ str_c(as.character(estimate), "**"),
+        p.value < 0.01 ~ str_c(as.character(estimate), "***"),
+        TRUE ~ as.character(estimate)
+      )
     )
 
   wide_tbl <- cleaned_coefs |>
-    select(female, specification, term, estimates) |>
+    select(female, specification, term, estimate, std.error) |>
     pivot_wider(
       names_from = specification,
-      values_from = estimates,
-      values_fill = "-"
+      values_from = c(estimate, std.error)
     ) |>
     group_by(female)
 }
 
 
-# Function to generate and style table from dataframe
-generate_regression_table <- function(regression_tbl) {
+# Function to generate table from dataframe
+generate_regression_table <- function(regression_tbl, formulas) {
   order_panels <- c("Panel A: Women", "Panel B: Men")
 
+  column_pairs <- names(formulas) |>
+    map(\(x) c(str_c("estimate_", x), str_c("std.error_", x)))
+
   basic_tbl <- regression_tbl |>
-    arrange(factor(female, leve = order_panels)) |>
+    mutate(across(everything(), as.character)) |>
+    arrange(factor(female, level = order_panels)) |>
     gt(rowname_col = "term") |>
     tab_header(title = "Regression Table")
 
-  basic_tbl |>
-    cols_label(
-      pols_baseline = "(1)",
-      pols_controls = "(2)",
-      pols_cubics = "(3)",
-      fe_baseline = "(4)",
-      fe_controls = "(5)",
-      fe_cubics = "(6)"
-    ) |>
-    cols_align(
-      align = "center",
-      columns = starts_with(c("pols", "fe"))
-    )
+  for (pair in column_pairs) {
+    basic_tbl <- basic_tbl |>
+      cols_merge(
+        columns = pair,
+        pattern = "<<{1}<br>({2})>>"
+      )
+  }
+
+  return(basic_tbl)
 }
 
+# Function to style regression table
+style_regression_table <- function(regression_tbl) {
+  
+}
 
 # Function to add additional information to table
 generate_specification_rows <- function(model_coef_tbl) {
@@ -61,7 +70,8 @@ generate_specification_rows <- function(model_coef_tbl) {
     mutate(
       `Controls` = if_else(str_detect(specification, "baseline"), "No", "Yes"),
       `Cubics` = if_else(str_detect(specification, "cubics"), "Yes", "No"),
-      `Fixed Effects` = if_else(str_detect(specification, "fe"), "Yes", "No")
+      `Fixed Effects` = if_else(str_detect(specification, "fe"), "Yes", "No"),
+      specification = str_c("estimate_", specification)
     ) |>
     pivot_longer(-specification, names_to = "term", values_to = "value") |>
     pivot_wider(names_from = specification, values_from = value) |>

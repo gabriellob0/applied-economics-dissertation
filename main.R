@@ -55,17 +55,17 @@ model_formulas <- generate_model_specifications()
 psid_models <- estimate_models(psid_model_data, model_formulas)
 
 model_estimates <- tidy_model_estimates(psid_models)
-model_statistics <- psid_models |>
-  generate_model_statistics() |>
-  format_model_stats()
+#model_statistics <- psid_models |>
+#  generate_model_statistics() |>
+#  format_model_stats()
 
 
 # tables ----
 model_descriptions <- generate_specification_rows(model_estimates)
 
-model_estimates |>
+test <- model_estimates |>
   prepare_regression_table() |>
-  generate_regression_table() |>
+  generate_regression_table(model_formulas) |>
   rows_add(.list = model_descriptions)# |>
   #rows_add(.list = model_statistics$data[[2]])
 
