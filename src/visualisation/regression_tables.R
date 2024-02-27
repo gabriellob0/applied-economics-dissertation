@@ -96,11 +96,22 @@ generate_specification_rows <- function(model_coef_tbl) {
 
 # Function to format model statistics for gt table
 format_model_stats <- function(model_stats_tbl) {
-  model_stats_tbl |>
+  model_stats_pivoted <- model_stats_tbl |>
+    mutate(specification = str_c("estimate_", specification)) |>
     pivot_longer(adj.r.squared:nhouseholds) |>
-    pivot_wider(names_from = specification, values_from = value) |>
+    pivot_wider(names_from = specification, values_from = value)
+
+  model_stats_pivoted |>
     rename(term = name) |>
-    mutate(across(everything(), as.character)) |>
-    group_nest(female) |>
-    mutate(data = map(data, as.list))
+    mutate(
+      across(everything(), as.character),
+      female = if_else(female == 1, "Panel A: Women", "Panel B: Men"),
+      term = case_when(
+        term == "adj.r.squared" ~ "Adj. R-Squared",
+        term == "within.r.squared" ~ "Within R-Squared",
+        term == "nobs" ~ "Observations",
+        term == "nhouseholds" ~ "Households"
+      )
+    ) |>
+    as.list()
 }
