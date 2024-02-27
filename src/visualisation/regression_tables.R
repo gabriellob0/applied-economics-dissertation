@@ -76,6 +76,11 @@ style_regression_table <- function(regression_tbl) {
     cols_align(
       align = "center",
       columns = starts_with("estimate")
+    ) |>
+    tab_source_note(
+      source_note = md(
+        "18 to 65 year old... "
+      )
     )
 }
 
@@ -103,6 +108,7 @@ format_model_stats <- function(model_stats_tbl) {
       across(everything(), as.character)
     ) |>
     pivot_longer(adj.r.squared:nhouseholds) |>
+    mutate(value = if_else(str_detect(value, "NA"), NA, value)) |>
     pivot_wider(names_from = specification, values_from = value)
 
   model_stats_pivoted |>

@@ -70,4 +70,3 @@ model_estimates |>
   rows_add(.list = model_descriptions) |>
   #TODO: fix NAs.
   style_regression_table()
-
