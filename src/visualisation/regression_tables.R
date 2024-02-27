@@ -9,13 +9,13 @@ prepare_regression_table <- function(model_coef_tbl) {
   cleaned_coefs <- model_coef_tbl |>
     filter(term %in% c("wife_earns_more", "hisp:wife_earns_more", "hisp")) |>
     mutate(
-      across(everything(as.character)),
       term = case_when(
         term == "wife_earns_more" ~ "WifeEarnsMore",
         term == "hisp" ~ "Hispanic",
         term == "hisp:wife_earns_more" ~ "Hispanic x WifeEarnsMore"
       ),
       female = if_else(female == 1, "Panel A: Women", "Panel B: Men"),
+      across(c(estimate, std.error), \(x) format(round(x, 3), nsmall = 3)),
       estimate = case_when(
         p.value < 0.1 & p.value >= 0.05 ~ str_c(as.character(estimate), "*"),
         p.value < 0.05 & p.value >= 0.01 ~ str_c(as.character(estimate), "**"),
@@ -97,14 +97,17 @@ generate_specification_rows <- function(model_coef_tbl) {
 # Function to format model statistics for gt table
 format_model_stats <- function(model_stats_tbl) {
   model_stats_pivoted <- model_stats_tbl |>
-    mutate(specification = str_c("estimate_", specification)) |>
+    mutate(
+      specification = str_c("estimate_", specification),
+      across(c("adj.r.squared", "within.r.squared"), \(x) format(round(x, 3), nsmall = 3)),
+      across(everything(), as.character)
+    ) |>
     pivot_longer(adj.r.squared:nhouseholds) |>
     pivot_wider(names_from = specification, values_from = value)
 
   model_stats_pivoted |>
     rename(term = name) |>
     mutate(
-      across(everything(), as.character),
       female = if_else(female == 1, "Panel A: Women", "Panel B: Men"),
       term = case_when(
         term == "adj.r.squared" ~ "Adj. R-Squared",

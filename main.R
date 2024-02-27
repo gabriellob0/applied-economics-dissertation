@@ -68,5 +68,6 @@ model_estimates |>
   generate_regression_table(model_formulas) |>
   rows_add(.list = model_statistics) |>
   rows_add(.list = model_descriptions) |>
+  #TODO: fix NAs.
   style_regression_table()
 
