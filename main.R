@@ -63,10 +63,14 @@ model_statistics <- psid_models |>
 # tables ----
 model_descriptions <- generate_specification_rows(model_estimates)
 
-model_estimates |>
+reg_table <- model_estimates |>
   prepare_regression_table() |>
   generate_regression_table(model_formulas) |>
   rows_add(.list = model_statistics) |>
   rows_add(.list = model_descriptions) |>
-  #TODO: fix NAs.
-  style_regression_table()
+  style_regression_table() |>
+  opt_table_font(font = "Libertinus Serif")
+
+reg_table
+
+gtsave(reg_table, "reporting/regression_table.png", expand = 100)
