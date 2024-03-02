@@ -69,7 +69,8 @@ reg_table <- model_estimates |>
   rows_add(.list = model_statistics) |>
   rows_add(.list = model_descriptions) |>
   style_regression_table() |>
-  opt_table_font(font = "Libertinus Serif")
+  opt_table_font(font = "Libertinus Serif Semibold") |>
+  tab_options(table.width = pct(70))
 
 reg_table
 

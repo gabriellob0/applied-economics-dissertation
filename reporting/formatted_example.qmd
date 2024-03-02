@@ -1,0 +1,63 @@
+---
+title: "Gender Norms, Hispanicity, and Household Production: Evidence from the US"
+author: "Gabriel Lobo de Oliveira"
+abstract: "Example of abstract."
+format:
+  typst:
+    keep-typ: true
+fontsize: 12pt
+execute: 
+  echo: false
+bibliography: refs.bib
+bibliographystyle: harvard-cite-them-right
+---
+
+{{< pagebreak >}}
+
+## Introduction
+
+Example of text here.
+
+## Literature Review
+
+### Social Norms and Identity
+
+Social norms have received considerable attention from economists starting in the early 2000s to explain economic behaviours that traditional models could not. Some notable recent examples have included conflict-related sexual violence (Guarnieri and Tur-Prats, 2023), domestic violence (Alessina, Brioschi and La Ferrara, 2020), labour market participation, marriage markets, and household production (Bertrand, Kamenica and Pan, 2015; Senik, Georgieff and Lippmann, 2020).
+
+Much of this literature has focused on the role of gender norms on economic (and otherwise) behaviours, following previous research in other social sciences. West and Zimmerman (1987) developed many ideas in the sociology literature that economists later incorporated. In particular, they provided an analytical formulation of gender as *produced* from individual behaviours.
+
+Given the presence of *normative conceptions* on the appropriateness of different behaviours for individuals belonging to different *sex categories*[^1], individuals use these behaviours to associate themselves with these categories. West and Zimmerman (1987) contextualise the gendered division of labour within this framework. Women do housework, and men do not because it helps them to establish their identity.
+
+[^1]: West and Zimmerman (1987) propose an analytical distinction between *sex*, *sex category*, and *gender*. They define *sex* as determined by biological criteria and *sex category* as a categorisation using these criteria in a social context.
+
+These ideas were primarily introduced in the economic literature by Akerlof and Kranton (2000, 2010). Drawing from social psychology and sociology research, they propose a utility function that depends on social identity. Social identity can comprise different categories (such as sex categories), which are each associated with specific prescriptions. Violating these prescriptions generates disutility in itself since they evoke negative feelings (in particular, anxiety).
+
+A critical aspect of the model is that individuals self-assign to categories and also assign others to categories. Furthermore, a person's self-assigned category does not need to match how others perceive her. Formally, "U_i" denotes individual "i's" utility function.
+
+$$
+U_i = U_i(a_i, a_{-i}, I_i)
+$$
+
+where "a={a_i, a_-i}" is a strategy profile and "I_i" is the identity. Identity is a function of the strategy profile given "i's" assignment of individuals to categories "c_i element of C" (where C is the set of all categories), personal characteristics "e_i", and the prescriptions associated with different categories P.
+
+$$
+I_i = I_i(a_i, a_{-i}; c_i, \epsilon_i, \textbf{P})
+$$
+
+Since individual "i" assigns categories to other players and holds that, given these categories, they should adhere to specific behaviours, this function captures externalities from violating prescriptions. For example, a wife who outearns her husband could challenge his "manhood". Consequently, players might attempt to preserve their identity by punishing violators. In the example above, this could be by threatening divorce.
+
+A substantial strand of the literature has understood social norms as behaviours that are followed given a threat of punishment. Here, I understand social norms broadly, as implied by the prescriptions in Akerlof and Kranton's (2000) model or the *normative conceptions* used by West and Zimmerman (1987). However, the term lacks standard usage within economics or between social sciences.
+
+Akerlof and Kranton (2000) also contextualise housework within their model. In particular, as with previous research, they highlight that women do the majority of housework and child care, even if they are primary earners in the household. Standard economic models (CITE) would instead predict that labour market income would negatively affect housework. The opportunity cost of household production is higher for an individual with higher wages so that household members would specialise based on relative incomes.
+
+### Next Part
+
+Some text example [@smith2024].
+
+# Code Test
+
+Table from imagine
+
+![](regression_table.png){fig-align="center"}
+
+{{< pagebreak >}}

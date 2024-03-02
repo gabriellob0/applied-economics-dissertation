@@ -1,14 +1,30 @@
 # Draft
 
+## Introduction
+
 ## Section 2.1 (20 marks)
 
 > This section should focus on a discussion of the economics which lies behind the topic. It should explain relevant economic theory and discuss why the model being estimated and/or the hypotheses being tested are interesting and important. It should demonstrate a good grasp of economic theory.
 
-There exists a large literature on decision making within households. Many relevant individual decisions and their associated outcomes are made jointly by families. These families frequently share resources, but each family member might have preferences that are misalligned.
+A large portion of the economic literature has devoted its attention to decision making within households. Research has shown the importance of family to the decision making of individuals. Families frequently share resources and, consequently, make decisions on their allocation together. However, family member might have misalligned preferences.
+
+Given the focus on gender roles within couples, the model assumes cohabiting couples of individuals with shared budgets. Decisions about labour supply are made jointly. I follow the strand of models called collective models within the literature, which are a form o cooperative bargaining model. The main assumption behind collective models are that household decisions are always Pareto efficient.
+
+Such models highlight the importance of factors such as.
+
+In a household with two members, utility for individual \[ i element (a, b) \]
+
+\[ \text{U}^{i} (Q, q^a, q^b) \]
 
 ## Section 2.2 (20 marks)
 
 > This section should provide a literature review of previous work in the field of central article or topic question.
+
+Social norms only came to prominence within the economic literature in the early 2000s. Akerlof and Kranton (2000) was the seminal paper highlighting how considerations on norms can explain empirically observed behaviours that did not match predictions from standard household models.
+
+Bertrand, Kamenica, and Pan (2015) demonstrated using US data the relevance of a particular gender norm. The male breadwinner norm. This norm establishes that the men are responsible for bringing money to the family while women are expected to take domestic duties. They show using us data that violating the male breadwinner norm, defined at wifes earning more than 50% of household income, has significant effects on marriages, divorces, measures of satisfactions, labour market participation rates, work hours, and household production.
+
+The effect on household production goes...
 
 ## Section 3.1 (20 marks)
 

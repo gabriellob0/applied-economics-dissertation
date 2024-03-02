@@ -79,7 +79,7 @@ style_regression_table <- function(regression_tbl) {
     ) |>
     tab_source_note(
       source_note = md(
-        "18 to 65 year old... "
+        "**Notes:** Sample includes married couples aged 18 to 65 year old. Only couples were both members are employed and have positive income in a given year are included. Some additional text so I can test when this guy will breakline without me having to manually specify it Standard errors are reported in parenthesis. ***significant at 1% level, **at 5%, *at 10%."
       )
     )
 }
