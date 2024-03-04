@@ -23,9 +23,8 @@ load_packages(required_packages)
 
 
 # import data ----
-psid_fpath <- "data/interim/psid_hufe.arrow"
-
 # TODO: consider cbirth and immiyear
+psid_fpath <- "data/interim/psid_hufe.arrow"
 psid <- read_psid_data(psid_fpath)
 
 
@@ -70,8 +69,25 @@ reg_table <- model_estimates |>
   rows_add(.list = model_descriptions) |>
   style_regression_table() |>
   opt_table_font(font = "Libertinus Serif Semibold") |>
-  tab_options(table.width = pct(70))
+  tab_options(table.width = pct(70))#, table.font.size = px(10))
 
 reg_table
 
-gtsave(reg_table, "reporting/regression_table.png", expand = 100)
+#gtsave(reg_table, "reporting/regression_table.png", expand = 100)
+
+
+# plots ----
+library(ggplot2)
+
+female_density <- psid_model_data |>
+  filter(female == 1)
+
+non_hisp_density <- ggplot(aes(x = female_income_share), data = filter(female_density, hisp == 0)) +
+  geom_density() +
+  theme_bw()
+
+hisp_density <- ggplot(aes(x = female_income_share), data = filter(female_density, hisp == 1)) +
+  geom_density() +
+  theme_bw()
+
+gridExtra::grid.arrange(hisp_density, non_hisp_density, ncol = 2)

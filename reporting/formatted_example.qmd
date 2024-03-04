@@ -1,10 +1,8 @@
 ---
 title: "Gender Norms, Hispanicity, and Household Production: Evidence from the US"
 author: "Gabriel Lobo de Oliveira"
-abstract: "Example of abstract."
-format:
-  typst:
-    keep-typ: true
+abstract: "Example of abstract. I will add some additional words here to make it bigger just for completenes. As such, I will have a better idea of what it looks like normally. Signed, sealed, delivered, by me, grabiel, el grande."
+format: typst
 fontsize: 12pt
 execute: 
   echo: false
