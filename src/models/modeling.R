@@ -6,14 +6,23 @@ estimate_models <- function(data_tbl, specifications) {
   spec_tbl <- tibble::enframe(
     specifications,
     name = "specification", value = "formula"
-  )
+  ) |>
+    mutate(
+      vcov_formula = if_else(
+        str_detect(specification, "pols"),
+        "cluster ~ cpf_pid",
+        "twoway ~ cpf_pid + wavey"
+      )
+    )
 
   data_tbl |>
     group_nest(female) |>
     expand_grid(spec_tbl) |>
     mutate(
-      estimated_model = map2(
-        formula, data, \(x, y) feols(as.formula(x), data = y)
+      estimated_model = pmap(
+        list(formula, data, vcov_formula), \(x, y, z) feols(
+          as.formula(x), data = y, vcov = as.formula(z)
+        )
       ),
       nhouseholds = map(
         data, \(x) length(unique(pull(x, cpf_hid)))

@@ -34,7 +34,8 @@ duckdb_register(con, "psid", psid)
 
 
 # query ----
-psid_query <- perform_data_filtering(con, "psid") |>
+psid_query <- con |>
+  perform_data_filtering("psid") |>
   group_and_mutate_data()
 
 
@@ -50,10 +51,10 @@ model_formulas <- generate_model_specifications()
 
 
 # modelling ----
-# TODO: need to think about the standard errors
 psid_models <- estimate_models(psid_model_data, model_formulas)
 
 model_estimates <- tidy_model_estimates(psid_models)
+
 model_statistics <- psid_models |>
   generate_model_statistics() |>
   format_model_stats()

@@ -89,9 +89,9 @@ generate_specification_rows <- function(model_coef_tbl) {
   model_coef_tbl |>
     distinct(specification) |>
     mutate(
-      `Controls` = if_else(str_detect(specification, "baseline"), "No", "Yes"),
+      `Relative Income` = if_else(str_detect(specification, "baseline"), "No", "Yes"),
       `Cubics` = if_else(str_detect(specification, "cubics"), "Yes", "No"),
-      `Fixed Effects` = if_else(str_detect(specification, "fe"), "Yes", "No"),
+      `Individual Fixed Effects` = if_else(str_detect(specification, "fe"), "Yes", "No"),
       specification = str_c("estimate_", specification)
     ) |>
     pivot_longer(-specification, names_to = "term", values_to = "value") |>

@@ -4,8 +4,7 @@
 # Function to generate model formulas with dynamic controls
 generate_model_specifications <- function() {
   dependent_variable <- "hwork ~ "
-
-  baseline_explanatory_variables <- c("wife_earns_more", "female_income_share")
+  baseline_explanatory_variable <- "wife_earns_more"
 
   # controls ----
   non_income_controls <- c(
@@ -27,63 +26,89 @@ generate_model_specifications <- function() {
     "poly(log(part_income), 3)",
     "log(hhinc_post)"
   )
-
-  fixed_effects <- c(
-    "cpf_pid",
-    "wavey",
-    "rstate"
+  
+  relative_income <- "female_income_share"
+  
+  # fixed effects ----
+  pols_fixed_effects <- c("wavey", "rstate")
+  individual_fixed_effects <- c("cpf_pid", "wavey", "rstate")
+  
+  
+  # base formulas ----
+  baseline <- str_flatten(
+    c(
+      dependent_variable,
+      "hisp*(",
+      str_flatten(c(baseline_explanatory_variable, income_controls, non_income_controls), collapse = " + "),
+      ")"
+    )
   )
 
-  # pooled OLS ----
+  controls <- str_flatten(
+    c(
+      dependent_variable,
+      "hisp*(",
+      str_flatten(c(baseline_explanatory_variable, relative_income, income_controls, non_income_controls), collapse = " + "),
+      ")"
+    )
+  )
+
+  cubics <- str_flatten(
+    c(
+      dependent_variable,
+      "hisp*(",
+      str_flatten(c(baseline_explanatory_variable, relative_income, income_cubic_controls, non_income_controls), collapse = " + "),
+      ")"
+    )
+  )
+
+  # POLS ----
   pols_baseline <- str_flatten(
     c(
-      dependent_variable,
-      "hisp*(",
-      str_flatten(baseline_explanatory_variables, collapse = " + "),
-      ")"
+      baseline,
+      " | ",
+      str_flatten(pols_fixed_effects, collapse = " + ")
     )
   )
-
+  
   pols_controls <- str_flatten(
     c(
-      dependent_variable,
-      "hisp*(",
-      str_flatten(c(baseline_explanatory_variables, income_controls, non_income_controls), collapse = " + "),
-      ")"
+      controls,
+      " | ",
+      str_flatten(pols_fixed_effects, collapse = " + ")
     )
   )
-
+  
   pols_cubics <- str_flatten(
     c(
-      dependent_variable,
-      "hisp*(",
-      str_flatten(c(baseline_explanatory_variables, income_cubic_controls, non_income_controls), collapse = " + "),
-      ")"
+      cubics,
+      " | ",
+      str_flatten(pols_fixed_effects, collapse = " + ")
     )
   )
-
+  
   # fixed effects ----
   fe_baseline <- str_flatten(
     c(
-      pols_baseline,
+      baseline,
       " - hisp | ",
-      str_flatten(fixed_effects, collapse = " + ")
+      str_flatten(individual_fixed_effects, collapse = " + ")
     )
   )
 
   fe_controls <- str_flatten(
     c(
-      pols_controls,
+      controls,
       " - hisp | ",
-      str_flatten(fixed_effects, collapse = " + ")
+      str_flatten(individual_fixed_effects, collapse = " + ")
     )
   )
 
   fe_cubics <- str_flatten(
     c(
-      pols_cubics,
+      cubics,
       " - hisp | ",
-      str_flatten(fixed_effects, collapse = " + ")
+      str_flatten(individual_fixed_effects, collapse = " + ")
     )
   )
 
