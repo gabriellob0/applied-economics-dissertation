@@ -1,13 +1,15 @@
 ---
 title: "Gender Norms, Hispanicity, and Household Production: Evidence from the US"
 author: "Gabriel Lobo de Oliveira"
-abstract: "Example of abstract. I will add some additional words here to make it bigger just for completenes. As such, I will have a better idea of what it looks like normally. Signed, sealed, delivered, by me, grabiel, el grande."
-format: typst
-fontsize: 12pt
+#abstract: "Example of abstract. I will add some additional words here to make it bigger just for completenes. As such, I will have a better idea of what it looks like normally. Signed, sealed, delivered, by me, grabiel, el grande."
+format:
+  typst:
+    template: template.typ
+#fontsize: 12pt
 execute: 
   echo: false
-bibliography: refs.bib
-bibliographystyle: harvard-cite-them-right
+#bibliography: refs.bib
+#bibliographystyle: harvard-cite-them-right
 ---
 
 {{< pagebreak >}}
@@ -24,11 +26,11 @@ Social norms have received considerable attention from economists starting in th
 
 Much of this literature has focused on the role of gender norms on economic (and otherwise) behaviours, following previous research in other social sciences. West and Zimmerman (1987) developed many ideas in the sociology literature that economists later incorporated. In particular, they provided an analytical formulation of gender as *produced* from individual behaviours.
 
-Given the presence of *normative conceptions* on the appropriateness of different behaviours for individuals belonging to different *sex categories*[^1], individuals use these behaviours to associate themselves with these categories. West and Zimmerman (1987) contextualise the gendered division of labour within this framework. Women do housework, and men do not because it helps them to establish their identity.
+Given the presence of *normative conceptions* on the appropriateness of different behaviours for individuals belonging to different *sex categories*[^1], individuals use these behaviours to associate themselves with these categories. West and Zimmerman (1987) contextualise the gendered division of labour within this framework. Women do housework, and men do not because it helps them establish their identity.
 
 [^1]: West and Zimmerman (1987) propose an analytical distinction between *sex*, *sex category*, and *gender*. They define *sex* as determined by biological criteria and *sex category* as a categorisation using these criteria in a social context.
 
-These ideas were primarily introduced in the economic literature by Akerlof and Kranton (2000, 2010). Drawing from social psychology and sociology research, they propose a utility function that depends on social identity. Social identity can comprise different categories (such as sex categories), which are each associated with specific prescriptions. Violating these prescriptions generates disutility in itself since they evoke negative feelings (in particular, anxiety).
+These ideas were primarily introduced in the economic literature by Akerlof and Kranton (2000, 2010). Drawing from social psychology and sociology research, they propose a utility function that depends on social identity. Social identity can comprise different categories (such as sex categories), each associated with specific prescriptions. Violating these prescriptions generates disutility in itself since they evoke negative feelings (in particular, anxiety).
 
 A critical aspect of the model is that individuals self-assign to categories and also assign others to categories. Furthermore, a person's self-assigned category does not need to match how others perceive her. Formally, "U_i" denotes individual "i's" utility function.
 
@@ -42,15 +44,36 @@ $$
 I_i = I_i(a_i, a_{-i}; c_i, \epsilon_i, \textbf{P})
 $$
 
-Since individual "i" assigns categories to other players and holds that, given these categories, they should adhere to specific behaviours, this function captures externalities from violating prescriptions. For example, a wife who outearns her husband could challenge his "manhood". Consequently, players might attempt to preserve their identity by punishing violators. In the example above, this could be by threatening divorce.
+Since individual "i" assigns categories to other players and holds that, given these categories, they should adhere to specific behaviours, this function captures externalities from violating prescriptions. For example, a wife who outearns her husband challenges his "manhood". Consequently, players might attempt to preserve their identity by punishing violators. In the example above, this could be by threatening divorce.
 
-A substantial strand of the literature has understood social norms as behaviours that are followed given a threat of punishment. Here, I understand social norms broadly, as implied by the prescriptions in Akerlof and Kranton's (2000) model or the *normative conceptions* used by West and Zimmerman (1987). However, the term lacks standard usage within economics or between social sciences.
+A substantial strand of the literature has understood social norms as behaviours that individuals follow because of threats of punishment. Here, I understand social norms broadly, as implied by the prescriptions in Akerlof and Kranton's (2000) model or the normative conceptions used by West and Zimmerman (1987). However, the term lacks standard usage within economics or between social sciences.
 
-Akerlof and Kranton (2000) also contextualise housework within their model. In particular, as with previous research, they highlight that women do the majority of housework and child care, even if they are primary earners in the household. Standard economic models (CITE) would instead predict that labour market income would negatively affect housework. The opportunity cost of household production is higher for an individual with higher wages so that household members would specialise based on relative incomes.
+Akerlof and Kranton (2000) also contextualise housework within their model. In particular, as with previous research, they highlight that women do the majority of housework and child care, even if they are primary earners in the household. Standard economic models (CITE) would instead predict that labour market income would negatively affect housework. The opportunity cost of household production is higher for an individual with higher wages so that household members would specialise based on relative incomes. (TO IMPROVE)
 
-### Next Part
+### Social Norms and Household Division of Labour
 
 Some text example [@smith2024].
+
+Social Norms and Household Division of Labour
+Bertrand, Kamenica, and Pan (2015) is a more recent empirical analysis of the relationship between gender identity and relative incomes in households. There is a significant discontinuity in the distribution of female income share within households at 50%, which they attribute primarily to gender norms. The authors find significant effects of violating this norm on several different dimensions.
+
+TODO: make this into two or a maximum of three paragraphs discussing AK's model rather than describing BKP.
+
+First, they constructed marriage markets based on race, education, and age for 1980, 1990, 2000, and 2010. They regress the share of married individuals on an estimated probability of a random woman earning more than a random man within each market. The paper finds that this probability has a negative and statistically significant effect on the marriage rate, and this result is stable across specifications and an instrumental variables approach. Furthermore, given the increase in female labour market participation and earnings, they estimated that this effect could explain nearly 30% of the decline in marriage rates from 1980 to 2010.
+
+Second, within married couples, Bertran, Kamenica, and Pan (2015), women avoid outearning their husbands by working fewer hours or leaving the labour market entirely. They find a negative and significant effect of the estimated probability that a wife earns more than their husband on a dummy equal to one if she is in the labour market. Similarly, this probability is negatively associated with the gap between the wife's actual income and the potential income of working women. The results are also stable across different specifications.
+
+Third, couples with a wife earning more have less stable marriages across various measures. This result is stable across different specifications. Using a linear probability model, the authors also show that violating this norm increases the probability of divorce.
+
+Finally, Bertrand, Kamenica, and Pan (2015) study the relationship between relative income and home production. In contrast to the other dependent variables used in their analysis, home production is gendered. The paper shows that women who earn more than their husbands spend more time on housework, estimated by the interaction of two dummy variables.
+
+This particular result aligned very closely with predictions from the identity literature. In particular, since being the primary earner in the relationship leads to identity loss, a gendered activity compensates for it. TODO: Much of the sociology literature has highlighted the existence of a "second shift".
+
+Bertrand, Kamenica, and Pan (2015) reproduce many of these results using panel data. They use data from the Panel Study of Income Dynamics (PSID) from 1968 to 2009. When assessing home production, the dependent variable is the housework gap (wife's minus husband's). Similarly, they find larger and statistically significant gaps in couples where the wife is the breadwinner.
+
+### Formation and Persistence of Social Norms
+
+Lippmann, Georgieff, and Senik (2020) produce similar results using data from the German Socio-Economic Panel (German SOEP). However, they exploit Germany's division into East and West after the Second World War as a natural experiment to study the effect of institutions on gender norms. They argue that both sides had similar baseline characteristics pre-division (footnote 2), including unobserved gender norms, but that East Germany had instituted more gender-equal policies. In particular, legal gender equality, maternity and paternity leave, and social childcare services.
 
 # Code Test
 
