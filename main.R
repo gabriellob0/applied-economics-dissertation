@@ -5,6 +5,7 @@ source("src/features/query.R")
 source("src/features/prepare_model_data.R")
 source("src/models/model_specifications.R")
 source("src/models/modeling.R")
+source("src/visualisation/summary_tables.R")
 source("src/visualisation/regression_tables.R")
 
 required_packages <- c(
@@ -44,6 +45,15 @@ psid_queried <- collect(psid_query)
 psid_model_data <- prepare_model_data(psid_queried)
 # write_feather(psid_model_data, "data/processed/model_data.arrow")
 # psid_model_data <- arrow::read_feather("data/processed/model_data.arrow")
+
+
+# summary statistics
+# TODO: add totals column
+psid_model_data |>
+  summarise_model_data() |>
+  style_summary_data() |>
+  opt_table_font(font = "Libertinus Serif Semibold") |>
+  tab_options(table.width = pct(70))
 
 
 # specifications ----
