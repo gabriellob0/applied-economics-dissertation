@@ -13,8 +13,8 @@ perform_data_filtering <- function(con, table_name) {
       livpart == 1,
       emplst6 == 1,
       incjob1_mg > 0,
-      hhinc_post > 0#,
-      #wavey > 2008 #TODO: I need to justify my T here
+      hhinc_post > 0,
+      wavey >= 1990
     )
 }
 

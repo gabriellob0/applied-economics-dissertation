@@ -47,14 +47,14 @@ psid_model_data <- prepare_model_data(psid_queried)
 # psid_model_data <- arrow::read_feather("data/processed/model_data.arrow")
 
 
-# summary statistics
-# TODO: add totals column
-psid_model_data |>
+# summary statistics ----
+data_table <- psid_model_data |>
   summarise_model_data() |>
   style_summary_data() |>
   opt_table_font(font = "Libertinus Serif Semibold") |>
   tab_options(table.width = pct(70))
 
+#gtsave(data_table, "reporting/tables/data_table.png", expand = 100)
 
 # specifications ----
 model_formulas <- generate_model_specifications()
@@ -84,7 +84,7 @@ reg_table <- model_estimates |>
 
 reg_table
 
-#gtsave(reg_table, "reporting/regression_table.png", expand = 100)
+#gtsave(reg_table, "reporting/tables/regression_table.png", expand = 100)
 
 
 # plots ----
