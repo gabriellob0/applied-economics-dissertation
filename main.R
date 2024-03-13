@@ -85,20 +85,3 @@ reg_table <- model_estimates |>
 reg_table
 
 #gtsave(reg_table, "reporting/tables/regression_table.png", expand = 100)
-
-
-# plots ----
-library(ggplot2)
-
-female_density <- psid_model_data |>
-  filter(female == 1)
-
-non_hisp_density <- ggplot(aes(x = female_income_share), data = filter(female_density, hisp == 0)) +
-  geom_density() +
-  theme_bw()
-
-hisp_density <- ggplot(aes(x = female_income_share), data = filter(female_density, hisp == 1)) +
-  geom_density() +
-  theme_bw()
-
-gridExtra::grid.arrange(hisp_density, non_hisp_density, ncol = 2)
