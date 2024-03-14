@@ -1,4 +1,7 @@
 # dependencies ----
+# note you need the AGG backend + Libertinus Serif for the charts to render
+# properly. otherwise, it might still work even without modifications,
+# but it might just not look the same
 source("src/utils.R")
 source("src/features/read_psid_data.R")
 source("src/features/query.R")
@@ -17,7 +20,9 @@ required_packages <- c(
   "purrr", # TODO: consider furrr for parallel
   "broom",
   "tidyr",
-  "gt"
+  "gt",
+  "rddensity",
+  "ggplot2"
 )
 
 load_packages(required_packages)
@@ -55,6 +60,17 @@ data_table <- psid_model_data |>
   tab_options(table.width = pct(70))
 
 #gtsave(data_table, "reporting/tables/data_table.png", expand = 100)
+
+
+# manipulation testing
+manipulation_data <- clean_manipulation_data(psid_model_data)
+summary(test_manipulation(manipulation_data)$hispanic)
+summary(test_manipulation(manipulation_data)$`non-hispanic`)
+summary(test_manipulation(manipulation_data)$`full-sample`)
+
+discontinuity_plots <- manipulation_data |>
+  create_discontinuity_plot() |>
+  plot_discontinuity()
 
 # specifications ----
 model_formulas <- generate_model_specifications()

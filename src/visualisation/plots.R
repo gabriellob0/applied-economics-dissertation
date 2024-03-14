@@ -14,11 +14,11 @@ library(ggplot2)
 prepare_plot_data <- function(data, cutoff) {
   # Filter the data for initial observations per cpf_hid and pull the female_income_share column
   plot_data <- data |> 
-    dplyr::select(cpf_hid, wavey, female_income_share) |>
-    dplyr::group_by(cpf_hid) |>
-    dplyr::filter(wavey == min(wavey)) |>
-    dplyr::distinct() |>
-    dplyr::pull(female_income_share)
+    select(cpf_hid, wavey, female_income_share) |>
+    group_by(cpf_hid) |>
+    filter(wavey == min(wavey)) |>
+    distinct() |>
+    pull(female_income_share)
   
   # Calculate density estimates for the selected data around the cutoff
   rdplot <- rdplotdensity(rddensity(plot_data, c = cutoff), plot_data)
@@ -35,7 +35,7 @@ prepare_plot_data <- function(data, cutoff) {
       ciu = f_q + qnorm(0.975) * se_q
     ))
   
-  return(rdplot_data)
+  return(rddensity(plot_data, c = cutoff))
 }
 
 # Function to create a plot based on the prepared data and a specified cutoff
@@ -49,14 +49,15 @@ create_plot <- function(rdplotLeft, rdplotRight, cutoff) {
   ggplot() +
     theme_bw() +
     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-    geom_ribbon(data = rdplotLeft, aes(x = grid, ymin = cil, ymax = ciu), alpha = 0.2, fill = "gray50") +
-    geom_ribbon(data = rdplotRight, aes(x = grid, ymin = cil, ymax = ciu), alpha = 0.2, fill = "gray50") +
+    #geom_ribbon(data = rdplotLeft, aes(x = grid, ymin = cil, ymax = ciu), alpha = 0.2, fill = "gray50") +
+    #geom_ribbon(data = rdplotRight, aes(x = grid, ymin = cil, ymax = ciu), alpha = 0.2, fill = "gray50") +
     geom_line(data = rdplotLeft, aes(x = grid, y = f_p), col = "black", linewidth = 0.8) +
     geom_line(data = rdplotRight, aes(x = grid, y = f_p), col = "black", linewidth = 0.8) +
     geom_vline(xintercept = cutoff, linetype = "dashed", color = "gray30") +
     # it is clearly not a fraction since it goes above 1
     labs(x = "Share earned by the wife", y = "Fraction of couples") +
-    coord_cartesian(xlim = c(0, 1), ylim = c(0, max(rdplotLeft$ciu, rdplotRight$ciu)))
+    coord_cartesian(xlim = c(0, 1), ylim = c(0, max(rdplotLeft$ciu, rdplotRight$ciu))) +
+    theme(text = element_text(family = "Libertinus Serif", face="bold"))
 }
 
 # Usage example
