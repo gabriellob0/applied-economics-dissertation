@@ -1,7 +1,7 @@
 # dependencies ----
-# note you need the AGG backend + Libertinus Serif for the charts to render
-# properly. otherwise, it might still work even without modifications,
-# but it might just not look the same
+# Note you need the AGG backend + Libertinus Serif for the charts to render
+# properly. It might still work even without modifications,
+# but it might just not look the same.
 source("src/utils.R")
 source("src/features/read_psid_data.R")
 source("src/features/query.R")
@@ -9,6 +9,7 @@ source("src/features/prepare_model_data.R")
 source("src/models/model_specifications.R")
 source("src/models/modeling.R")
 source("src/visualisation/summary_tables.R")
+source("src/visualisation/discontinuity_plots.R")
 source("src/visualisation/regression_tables.R")
 
 required_packages <- c(
@@ -22,7 +23,8 @@ required_packages <- c(
   "tidyr",
   "gt",
   "rddensity",
-  "ggplot2"
+  "ggplot2",
+  "cowplot"
 )
 
 load_packages(required_packages)
@@ -62,7 +64,7 @@ data_table <- psid_model_data |>
 #gtsave(data_table, "reporting/tables/data_table.png", expand = 100)
 
 
-# manipulation testing
+# manipulation testing ----
 manipulation_data <- clean_manipulation_data(psid_model_data)
 summary(test_manipulation(manipulation_data)$hispanic)
 summary(test_manipulation(manipulation_data)$`non-hispanic`)
@@ -71,6 +73,35 @@ summary(test_manipulation(manipulation_data)$`full-sample`)
 discontinuity_plots <- manipulation_data |>
   create_discontinuity_plot() |>
   plot_discontinuity()
+
+figure1 <- discontinuity_plots$`full-sample` +
+  labs(title = "Figure 1",
+       subtitle = "Distribution of Relative Income (PSID) for the full sample (Hispanics and non-Hispanics)")
+
+hisp_plot <- discontinuity_plots$`hispanic` +
+  labs(title = "Hispanic Households")
+
+non_hisp_plot <- discontinuity_plots$`non-hispanic` +
+  labs(title = "non-Hispanic Households")
+
+combined_plot <- plot_grid(
+  hisp_plot, non_hisp_plot, ncol = 2
+)
+
+title_gg <- ggplot() + 
+  labs(title = "Figure 2", subtitle = "Distribution of Relative Income (PSID)") +
+  theme(text = element_text(family = "Libertinus Serif", face = "bold"),
+        plot.title = element_text(hjust = 0.5, size = 16),
+        plot.subtitle = element_text(hjust = 0.5, size = 12))
+
+figure2 <- plot_grid(
+  title_gg, combined_plot,
+  ncol = 1, rel_heights = c(0.1, 1)
+)
+
+#ggsave("reporting/figures/figure1.png", figure1)
+#ggsave("reporting/figures/figure2.png", figure2)
+
 
 # specifications ----
 model_formulas <- generate_model_specifications()
