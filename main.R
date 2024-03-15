@@ -8,6 +8,7 @@ source("src/features/query.R")
 source("src/features/prepare_model_data.R")
 source("src/models/model_specifications.R")
 source("src/models/modeling.R")
+source("src/models/first_differences.R")
 source("src/visualisation/summary_tables.R")
 source("src/visualisation/discontinuity_plots.R")
 source("src/visualisation/regression_tables.R")
@@ -132,3 +133,12 @@ reg_table <- model_estimates |>
 reg_table
 
 #gtsave(reg_table, "reporting/tables/regression_table.png", expand = 100)
+
+
+# first-differences ----
+first_diff_data <- psid_model_data |>
+  prepare_first_diff() |>
+  estimate_models(model_formulas) |>
+  tidy_model_estimates() |>
+  prepare_regression_table() |>
+  generate_regression_table(model_formulas)
