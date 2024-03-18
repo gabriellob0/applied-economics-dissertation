@@ -62,7 +62,7 @@ data_table <- psid_model_data |>
   opt_table_font(font = "Libertinus Serif Semibold") |>
   tab_options(table.width = pct(70))
 
-#gtsave(data_table, "reporting/tables/data_table.png", expand = 100)
+gtsave(data_table, "reporting/tables/data_table.png", expand = 100)
 
 
 # manipulation testing ----
